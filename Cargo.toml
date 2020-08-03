@@ -1,0 +1,8 @@
+[workspace]
+
+members = [
+    "log-lib-filter",
+    "tests/liba",
+    "tests/libb",
+    "tests/app",
+]
