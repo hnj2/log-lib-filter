@@ -1,3 +1,4 @@
+#![no_std]
 pub use log;
 
 #[macro_export]
