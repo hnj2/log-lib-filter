@@ -7,12 +7,21 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+log = "0.4"
 log-lib-filter = { path = "../../log-lib-filter" }
 
 [features]
+default = ["log_level_warn"]
+
 max_level_off = []
 max_level_error = []
 max_level_warn = []
 max_level_info = []
 max_level_debug = []
 max_level_trace = []
+
+log_level_error = []
+log_level_warn = []
+log_level_info = []
+log_level_debug = []
+log_level_trace = []

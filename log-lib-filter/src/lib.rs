@@ -2,9 +2,16 @@
 pub use log;
 
 #[macro_export]
-macro_rules! if_not_any_feature {
-    ($code:expr, $($feat:literal),+$(,)?) => {
-        #[cfg(not(any($(feature = $feat),+)))]
+macro_rules! if_features {
+    ($code:expr, not_any $($not_any:literal,)* any $($any:literal),*$(,)?) => {
+        #[cfg(all(
+            not(any(
+                $(feature = $not_any),*
+            )),
+            any(
+                $(feature = $any),*
+            )
+        ))]
         $code
     }
 }
@@ -12,12 +19,16 @@ macro_rules! if_not_any_feature {
 #[macro_export]
 macro_rules! if_log_trace {
     ($code:expr) => {
-        $crate::if_not_any_feature!($code,
-            "max_level_off",
-            "max_level_error",
-            "max_level_warn",
-            "max_level_info",
-            "max_level_debug",
+        $crate::if_features!(
+            $code,
+                not_any
+                    "max_level_off",
+                    "max_level_error",
+                    "max_level_warn",
+                    "max_level_info",
+                    "max_level_debug",
+                any
+                    "log_level_trace",
         )
     }
 }
@@ -25,11 +36,16 @@ macro_rules! if_log_trace {
 #[macro_export]
 macro_rules! if_log_debug {
     ($code:expr) => {
-        $crate::if_not_any_feature!($code,
-            "max_level_off",
-            "max_level_error",
-            "max_level_warn",
-            "max_level_info",
+        $crate::if_features!(
+            $code,
+                not_any
+                    "max_level_off",
+                    "max_level_error",
+                    "max_level_warn",
+                    "max_level_info",
+                any
+                    "log_level_debug",
+                    "log_level_trace",
         )
     }
 }
@@ -37,10 +53,16 @@ macro_rules! if_log_debug {
 #[macro_export]
 macro_rules! if_log_info {
     ($code:expr) => {
-        $crate::if_not_any_feature!($code,
-            "max_level_off",
-            "max_level_error",
-            "max_level_warn",
+        $crate::if_features!(
+            $code,
+                not_any
+                    "max_level_off",
+                    "max_level_error",
+                    "max_level_warn",
+                any
+                    "log_level_info",
+                    "log_level_debug",
+                    "log_level_trace",
         )
     }
 }
@@ -48,9 +70,16 @@ macro_rules! if_log_info {
 #[macro_export]
 macro_rules! if_log_warn {
     ($code:expr) => {
-        $crate::if_not_any_feature!($code,
-            "max_level_off",
-            "max_level_error",
+        $crate::if_features!(
+            $code,
+                not_any
+                    "max_level_off",
+                    "max_level_error",
+                any
+                    "log_level_warn",
+                    "log_level_info",
+                    "log_level_debug",
+                    "log_level_trace",
         )
     }
 }
@@ -58,8 +87,16 @@ macro_rules! if_log_warn {
 #[macro_export]
 macro_rules! if_log_error {
     ($code:expr) => {
-        $crate::if_not_any_feature!($code,
-            "max_level_off",
+        $crate::if_features!(
+            $code,
+                not_any
+                    "max_level_off",
+                any
+                    "log_level_error",
+                    "log_level_warn",
+                    "log_level_info",
+                    "log_level_debug",
+                    "log_level_trace",
         )
     }
 }
@@ -67,7 +104,16 @@ macro_rules! if_log_error {
 #[macro_export]
 macro_rules! if_log_off {
     ($code:expr) => {
-        #[cfg(feature = "max_level_off")]
+        #[cfg(any(
+            feature = "max_level_off",
+            not(any(
+                "log_level_error",
+                "log_level_warn",
+                "log_level_info",
+                "log_level_debug",
+                "log_level_trace",
+            ))
+        ))]
         $code
     }
 }
